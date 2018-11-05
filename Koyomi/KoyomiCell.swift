@@ -23,7 +23,7 @@ final class KoyomiCell: UICollectionViewCell {
     enum CellStyle {
         case standard, circle, semicircleEdge(position: SequencePosition), line(position: SequencePosition?)
         
-        enum SequencePosition { case left, middle, right }
+        enum SequencePosition { case left, middle, right, onlyOne }
     }
     
     // Internal properties
@@ -105,7 +105,7 @@ final class KoyomiCell: UICollectionViewCell {
             lineView.isHidden = true
             circularView.isHidden = true
             
-            if case .left = position {
+            if case .onlyOne = position {
                 rightSemicircleView.isHidden = false
                 leftSemicircleView.isHidden  = false
                 self.backgroundColor = backgroundColor
@@ -114,7 +114,21 @@ final class KoyomiCell: UICollectionViewCell {
                 rightSemicircleView.backgroundColor = color
                 
                 // for bug: unnecessary line
-                leftSemicircleView.frame.size.width = bounds.width / 2 + 1
+                leftSemicircleView.frame.size.width = bounds.width / 2
+                rightSemicircleView.frame.size.width = bounds.width / 2
+                
+                leftSemicircleView.mask(with: .left)
+                rightSemicircleView.mask(with: .right)
+            } else if case .left = position {
+                rightSemicircleView.isHidden = false
+                leftSemicircleView.isHidden  = false
+                self.backgroundColor = backgroundColor
+                
+                leftSemicircleView.backgroundColor  = color
+                rightSemicircleView.backgroundColor = color
+                
+                // for bug: unnecessary line
+                leftSemicircleView.frame.size.width = bounds.width / 2
                 
                 leftSemicircleView.mask(with: .left)
                 rightSemicircleView.mask(with: .none)
@@ -153,7 +167,7 @@ final class KoyomiCell: UICollectionViewCell {
             switch position {
             case .left:
                 lineView.frame.origin.x = bounds.width - lineView.frame.width
-            case .middle:
+            case .middle, .onlyOne:
                 lineView.frame.size.width = bounds.width
                 lineView.frame.origin.x   = (bounds.width - lineView.frame.width) / 2
             case .right:
@@ -215,7 +229,7 @@ private extension KoyomiCell {
         contentLabel.sizeToFit()
         contentLabel.frame.origin = postion
         
-        rightSemicircleView.frame = CGRect(x: bounds.width / 2, y: 0, width: bounds.width / 2, height: bounds.height)
+        rightSemicircleView.frame = CGRect(x: bounds.width / 2 - 1, y: 0, width: bounds.width / 2 + 1, height: bounds.height)
         leftSemicircleView.frame  = CGRect(x: 0, y: 0, width: bounds.width / 2, height: bounds.height)
     }
     

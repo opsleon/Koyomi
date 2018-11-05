@@ -468,12 +468,14 @@ private extension Koyomi {
             style = {
                 var sequencePosition: KoyomiCell.CellStyle.SequencePosition {
                     let date = model.date(at: indexPath)
-                    if let start = model.sequenceDates.start, let _ = model.sequenceDates.end , date == start {
+                    if let start = model.sequenceDates.start, let end = model.sequenceDates.end, date == start, date != end {
                         return .left
-                    } else if let _ = model.sequenceDates.start, let end = model.sequenceDates.end , date == end {
+                    } else if let start = model.sequenceDates.start, let end = model.sequenceDates.end, date != start, date == end {
                         return .right
-                    } else {
+                    } else if let start = model.sequenceDates.start, let end = model.sequenceDates.end, date != start, date != end {
                         return .middle
+                    } else {
+                        return .onlyOne
                     }
                 }
                 
